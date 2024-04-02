@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Search from "./components/Search";
 import Header from "./components/Header";
@@ -7,18 +7,36 @@ function App() {
   const [val, setVal] = useState("");
   const [tasks, setTasks] = useState([]);
 
+  const saveData = (newTasks) => {
+    localStorage.setItem("data", JSON.stringify(newTasks));
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("data")) {
+      let data = JSON.parse(localStorage.getItem("data"));
+      setTasks(data);
+    }
+  }, [saveData]);
+
   function handleClick() {
     console.log(val);
-    let copy = [...tasks];
-    copy.push(val);
-    setTasks(copy);
+    let newTasks = [...tasks, { taskName: `${val}`, isCompleted: false }];
+    setTasks(newTasks);
     setVal("");
+    saveData(newTasks);
+  }
+
+  function toggleComplete(i) {
+    let newTask = [...tasks];
+    newTask[i].isCompleted = !newTask[i].isCompleted;
+    saveData(newTask);
   }
 
   function deleteTask(index) {
-    let copy = [...tasks];
-    copy.splice(index, 1);
-    setTasks(copy);
+    let newTasks = [...tasks];
+    newTasks.splice(index, 1);
+    setTasks(newTasks);
+    saveData(newTasks);
   }
 
   return (
@@ -48,8 +66,13 @@ function App() {
                 key={i}
                 className="w-full mb-2 flex justify-between items-center bg-slate-100"
               >
-                <span className="max-w-[85%] px-4 py-2 m-2 text-xl break-words">
-                  {task}
+                <span
+                  className={` max-w-[85%] px-4 py-2 m-2 text-xl break-words ${
+                    task.isCompleted && " line-through opacity-50"
+                  } `}
+                  onClick={() => toggleComplete(i)}
+                >
+                  {task.taskName}
                 </span>
                 <button
                   className="w-[10%] mr-1 rounded-full bg-transparent border-none cursor-pointer"
