@@ -18,12 +18,14 @@ function App() {
     }
   }, [saveData]);
 
-  function handleClick() {
-    console.log(val);
-    let newTasks = [...tasks, { taskName: `${val}`, isCompleted: false }];
-    setTasks(newTasks);
-    setVal("");
-    saveData(newTasks);
+  function addTask() {
+    // console.log(val)
+    if (val.trim() !== "") {
+      let newTasks = [...tasks, { taskName: `${val}`, isCompleted: false }];
+      setTasks(newTasks);
+      setVal("");
+      saveData(newTasks);
+    }
   }
 
   function toggleComplete(i) {
@@ -42,6 +44,9 @@ function App() {
   return (
     <>
       <Header />
+      {
+        // TaskInput
+      }
       <div className="w-full h-[100px] linetr flex justify-center items-end">
         <input
           type="text"
@@ -52,13 +57,16 @@ function App() {
         />
         <button
           className="px-5 py-2 rounded-r-lg outline-none border-2 border-blue-600 bg-blue-500 text-white font-bold"
-          onClick={handleClick}
+          onClick={addTask}
         >
           Add
         </button>
       </div>
       <Search input={val} />
-      <ul className="max-w-[400px] m-auto mt-[40px] text-xl break-words">
+      {
+        // TaskList
+      }
+      <ul className="tasks max-w-[400px] m-auto mt-[40px] text-xl break-words">
         {tasks.length > 0 ? (
           tasks.map(function (task, i) {
             return (
@@ -68,7 +76,7 @@ function App() {
               >
                 <span
                   className={` max-w-[85%] px-4 py-2 m-2 text-xl break-words ${
-                    task.isCompleted && " line-through opacity-50"
+                    task.isCompleted && " line-through opacity-40"
                   } `}
                   onClick={() => toggleComplete(i)}
                 >
